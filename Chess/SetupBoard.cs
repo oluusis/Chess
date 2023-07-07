@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection.Emit;
 using System.Text;
@@ -18,10 +19,13 @@ namespace Chess
 
         private ArrayList _figures { get; set; }
 
+        private Mover _mover { get; set; }
+
         public SetupBoard(Grid board, ArrayList figures)
         {
             this._board = board;
             this._figures = figures;
+            this._mover = new Mover(_board);
             SetUpFigures();
         }
 
@@ -31,16 +35,16 @@ namespace Chess
             for (int i = 0; i < _board.Children.Count; i++)
             {
                 Label label = _board.Children[i] as Label;
-              
-                if (label.Name.Substring(1,1) == "7")
-                {                 
+
+                if (label.Name.Substring(1, 1) == "7")
+                {
                     label.Content = "\u265F";
-                    _figures.Add(new Pawn(label, false));
+                    //_figures.Add(new Pawn(label, false));
                 }
                 else if (label.Name.Substring(1, 1) == "2")
                 {
                     label.Content = "\u2659";
-                    _figures.Add(new Pawn(label, true));
+                    //_figures.Add(new Pawn(label, true));
                 }
                 else
                 {
@@ -104,26 +108,39 @@ namespace Chess
                 label.MouseLeftButtonUp += OnClickSquare;
 
 
-            }          
+            }
         }
 
 
         public void OnClickSquare(object sender, EventArgs e)
         {
-            
-           
-            if(sender.GetType().ToString() == "System.Windows.Controls.Label")
+
+
+            if (sender.GetType().ToString() == "System.Windows.Controls.Label")
             {
                 Label clickedLabel = sender as Label;
-                if(clickedLabel.Content != "")
+
+                 //MessageBox.Show(clickedLabel.Name);
+                Debug.WriteLine(clickedLabel.Name);
+
+                if(clickedLabel.Content.ToString() == "" && this._mover.Figure == null)
                 {
-                    //int index = _figures.LastIndexOf(clickedLabel);
-                    //var figure = _figures[index];
-                    MessageBox.Show(clickedLabel.ToString());
+                    return;
                 }
+
+                if (this._mover.Figure != null)
+                {
+                    this._mover.MoveTo(clickedLabel);
+                }
+                else
+                {
+                    this._mover.Figure = clickedLabel;
+                }
+
+
             }
         }
 
-      
+
     }
 }

@@ -5,10 +5,12 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Chess"
         mc:Ignorable="d"
-        Title="MainWindow" Height="800" Width="800"
-        Background="White" WindowStartupLocation ="CenterScreen" ResizeMode="NoResize" WindowStyle="None" >
+        Title="MainWindow" Height="800" Width="1200"
+        Background="#FF191919" WindowStartupLocation ="CenterScreen" ResizeMode="NoResize" WindowStyle="None" >
 
-    <Grid x:Name="ChessBoard">
+
+
+    <Grid x:Name="ChessBoard" Margin="0,0,404,0" d:IsLocked="False">
         <Grid.Resources>
             <Style x:Key="WhiteSquers" TargetType="Label">
                 <Setter Property="Background" Value="White" />
@@ -36,7 +38,7 @@
             <RowDefinition Height="100"/>
             <RowDefinition Height="100"/>
             <RowDefinition Height="100"/>
-         
+
         </Grid.RowDefinitions>
 
         <Grid.ColumnDefinitions>
@@ -50,11 +52,11 @@
             <ColumnDefinition Width="100"/>
 
         </Grid.ColumnDefinitions>
-        
-        
+
+
 
         <!-- row 1-->
-        <Label x:Name="A8" Grid.Row="0" Grid.Column="0" Style="{StaticResource WhiteSquers}" Content=""/>
+        <Label x:Name="A8" Grid.Row="0" Grid.Column="0" Style="{StaticResource WhiteSquers}" Content="A8"/>
         <Label x:Name="B8" Grid.Row="0" Grid.Column="1" Style="{StaticResource GreenSquers}" Content="B8"/>
         <Label x:Name="C8" Grid.Row="0" Grid.Column="2" Style="{StaticResource WhiteSquers}" Content="C8"/>
         <Label x:Name="D8" Grid.Row="0" Grid.Column="3" Style="{StaticResource GreenSquers}" Content="D8"/>
@@ -62,7 +64,7 @@
         <Label x:Name="F8" Grid.Row="0" Grid.Column="5" Style="{StaticResource GreenSquers}" Content="F8"/>
         <Label x:Name="G8" Grid.Row="0" Grid.Column="6" Style="{StaticResource WhiteSquers}" Content="G8"/>
         <Label x:Name="H8" Grid.Row="0" Grid.Column="7" Style="{StaticResource GreenSquers}" Content="H8"/>
-       
+
 
         <!-- row 2 -->
         <Label x:Name="A7" Grid.Row="1" Grid.Column="0" Style="{StaticResource GreenSquers}" Content="A7"/>
@@ -137,4 +139,8 @@
         <Label x:Name="H1" Grid.Row="7" Grid.Column="7" Style="{StaticResource WhiteSquers}" Content="H1"/>
 
     </Grid>
+
+    
+
+
 </Window>
