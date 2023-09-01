@@ -21,12 +21,18 @@ namespace Chess
 
         private Mover _mover { get; set; }
 
+       
+
+        private readonly List<string> whiteFigures = new List<string> { "\u2655", "\u2654", "\u2657", "\u2656", "\u2658", "\u2659" };
+        private readonly List<string> blackFigures = new List<string> { "\u265F", "\u265C", "\u265E", "\u265D", "\u265A", "\u265B" };
+
         public SetupBoard(Grid board, ArrayList figures)
         {
             this._board = board;
             this._figures = figures;
             this._mover = new Mover(_board);
             SetUpFigures();
+            this.Side = true;
         }
 
 
@@ -111,10 +117,9 @@ namespace Chess
             }
         }
 
-
+        public bool Side { get; set; }
         public void OnClickSquare(object sender, EventArgs e)
-        {
-
+        {          
 
             if (sender.GetType().ToString() == "System.Windows.Controls.Label")
             {
@@ -127,13 +132,50 @@ namespace Chess
                 {
                     return;
                 }
-
+                               
                 if (this._mover.Figure != null)
                 {
-                    this._mover.MoveTo(clickedLabel);
+                    //Control to not killing yours
+                    if (Side)
+                    {
+                        if (whiteFigures.Contains(clickedLabel.Content) || clickedLabel.Content == "♚")
+                        {
+                            if(clickedLabel.Content != "♚")
+                            {
+                                this._mover.Figure = clickedLabel;
+                            }
+                           
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        if(blackFigures.Contains(clickedLabel.Content) || clickedLabel.Content == "♔")
+                        {
+                            if(clickedLabel.Content != "♔")
+                            {
+                                this._mover.Figure = clickedLabel;
+                            }
+                            
+                            return;
+                        }
+                    }
+
+                    //Moving
+                    if (this._mover.MoveTo(clickedLabel))
+                    {
+                        Side = !Side;
+                    }
+                   
+
                 }
                 else
                 {
+                    //Control who playing
+                    if (whiteFigures.Contains(clickedLabel.Content.ToString()) != Side)
+                    {
+                        return;
+                    }
                     this._mover.Figure = clickedLabel;
                 }
 

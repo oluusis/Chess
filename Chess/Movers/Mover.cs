@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Chess.Movers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,13 +13,22 @@ namespace Chess
         public Label? Figure { get; set; }
         private Grid board {  get; set; }
 
+        public ControlFigures Controller { get; set; }
+
         public Mover(Grid board)
         {
+            this.Controller = new ControlFigures(board);
             this.board = board;
         }
 
-        public void MoveTo(Label toMove)
+        public bool MoveTo(Label toMove)
         {
+            if (!Controller.PossibleMove(Figure.Content.ToString(),Figure.Name,toMove.Name))
+            {              
+                return false;
+            }
+
+            
             //if(this.Figure.Content.ToString() == "\u2659")
             //{
                 toMove.Content = this.Figure.Content;
@@ -26,6 +36,7 @@ namespace Chess
             //}
 
             this.Figure = null;
+            return true;
         }
 
         //another part
