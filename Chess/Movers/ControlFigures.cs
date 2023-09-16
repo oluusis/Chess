@@ -33,6 +33,9 @@ namespace Chess.Movers
                 case "\u2658":
                     return KnightValidation(from, to);
 
+                case "\u2656":
+                    return RockValidation(from, to);
+
 
                 default:
                     break;
@@ -164,6 +167,72 @@ namespace Chess.Movers
                 }
 
                 _mark = !_mark;
+            }
+
+            return false;
+        }
+
+        //queen = rock and bishop
+        public bool RockValidation(string from, string to)
+        {
+            string columns = from[0].ToString();
+
+            for (int i = Convert.ToInt32(from[1].ToString()) +1; i < 9; i++)
+            {
+                columns = columns[0] + i.ToString();
+                if(columns == to)
+                {
+                    return true;
+                }
+                else if(ReturnPosition(columns).Content != "")
+                {
+                    break;
+                }
+            }
+
+            columns = from[0].ToString();
+
+            for (int i = Convert.ToInt32(from[1].ToString())-1; i > 0; i--)
+            {
+                columns = columns[0] + i.ToString();
+                if (columns == to)
+                {
+                    return true;
+                }
+                else if (ReturnPosition(columns).Content != "")
+                {
+                    break;
+                }
+            }
+
+            columns = from;
+
+            for (int i = _xDirections.IndexOf(from[0]) + 1; i < 8; i++)
+            {
+                columns = _xDirections[i] + from[1].ToString();
+                if (columns == to)
+                {
+                    return true;
+                }
+                else if (ReturnPosition(columns).Content != "")
+                {
+                    break;
+                }
+            }
+
+            columns = from;
+
+            for (int i = _xDirections.IndexOf(from[0]) - 1; i > 0; i--)
+            {
+                columns = _xDirections[i] + from[1].ToString();
+                if (columns == to)
+                {
+                    return true;
+                }
+                else if (ReturnPosition(columns).Content != "")
+                {
+                    break;
+                }
             }
 
             return false;
