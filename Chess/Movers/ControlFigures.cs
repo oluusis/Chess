@@ -16,6 +16,11 @@ namespace Chess.Movers
         private Grid? _board { get; set; }
         private readonly List<char> _xDirections = new List<char>() { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H' };
 
+        private bool WhiteKingMoved = false;    
+
+        private List<string> _allAttackedSquaresFromBlack = new List<string>();
+        private List<string> _allAttackedSquaresFromWhite = new List<string>();
+
 
         public ControlFigures(Grid board)
         {
@@ -41,6 +46,9 @@ namespace Chess.Movers
 
                 case "\u2655":
                     return ValidateQueen(from, to);
+
+                case "\u2654":
+                    return ValidateKing(from, to);
 
 
                 default:
@@ -415,7 +423,42 @@ namespace Chess.Movers
             return false;
         }
 
+        public bool ValidateKing(string from, string to)
+        {
+            int fromColumn = _xDirections.IndexOf(from[0]);
+            int toColumn = _xDirections.IndexOf(to[0]);
 
+            int fromRow = Convert.ToInt32(from[1]);
+            int toRow = Convert.ToInt32(to[1]);
+
+            if ( fromColumn - toColumn <= 1 && fromColumn - toColumn >= -1 && fromRow - toRow <= 1 && fromRow - toRow >= -1)
+            {
+                this.WhiteKingMoved = true;
+                return true;
+            }
+
+            if (WhiteKingMoved) return false;
+
+
+            if (to[0] == 'G' && to[1] == '1' && ReturnPosition("H1").Content.ToString() == "\u2656" && ReturnPosition("F1").Content.ToString() == "")
+            {
+                this.WhiteKingMoved = true;
+                ReturnPosition("H1").Content = "";
+                ReturnPosition("F1").Content = "\u2656";
+                return true;
+            }
+
+            if(to[0] == 'C' && to[1] == '1' && ReturnPosition("A1").Content.ToString() == "\u2656" && ReturnPosition("B1").Content.ToString() == "" && ReturnPosition("D1").Content.ToString() == "")
+            {
+                this.WhiteKingMoved = true;
+                ReturnPosition("A1").Content = "";
+                ReturnPosition("D1").Content = "\u2656";
+                return true;
+            }
+
+            return false;
+
+        }
 
     }
 }
