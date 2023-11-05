@@ -143,7 +143,7 @@ namespace Chess
 
         }
 
-        //Control to not killing yours
+        //Control this.To not killing yours
         public void TryMove(Label? clickedLabel)
         {
             if (Side)

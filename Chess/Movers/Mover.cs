@@ -11,14 +11,11 @@ namespace Chess
     public class Mover
     {
         public Label? Figure { get; set; }
-        private Grid board { get; set; }
-
         public ControlFigures Controller { get; set; }
 
         public Mover(Grid board)
         {
             this.Controller = new ControlFigures(board);
-            this.board = board;
         }
 
         public bool MoveTo(Label toMove)

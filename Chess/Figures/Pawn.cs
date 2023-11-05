@@ -4,37 +4,52 @@ using System.Linq;
 using System.Windows.Controls;
 using System.Text;
 using System.Threading.Tasks;
+using Chess.Movers;
 
 namespace Chess.Figures
 {
     public class Pawn
     {
-        // Position
-        private Label Square { get; set; }
+        private ControlFigures control { get; set; }
 
-        // true - white, false - black
-        public bool Side { get; private set; }
-
-        // false - was killed
-        public bool IsInGame { get; set; }  
-
-        public Pawn(Label square, bool side)
+        public Pawn(ControlFigures control)
         {
-            this.Square = square;
-            this.Side = side;
+            this.control = control;
         }
 
-        public void Move(Label square)
+        public bool ValidateWhite()
         {
-            this.Square = square;
-        }
-
-        public void IsValid(Label square)
-        {
-            if (Side)
+            if (control.From[0] == control.To[0] && (Convert.ToInt16(control.From[1]) - Convert.ToInt16(control.To[1]) == -1))
             {
+                return true;
+            }
+            else if (control.From[0] == control.To[0] && control.From[1] == '2' && control.To[1] == '4')
+            {
+                if (control.ReturnPosition(control.From[0] + "3").Content == "") return true;
 
             }
+            return false;
+        }
+
+        public bool ValidateTaking(int side)
+        {
+            if (Convert.ToInt16(control.To[1]) - Convert.ToInt16(control.From[1]) == side && Math.Pow(control._xDirections.IndexOf(control.To[0]) - control._xDirections.IndexOf(control.From[0]), 2) == 1)
+                return true;
+            return false;
+
+        }
+
+        public bool ValidateBlack()
+        {
+            if (control.From[0] == control.To[0] && (Convert.ToInt16(control.From[1]) - Convert.ToInt16(control.To[1]) == 1))
+            { 
+                return true;
+            }
+            else if (control.From[0] == control.To[0] && control.From[1] == '7' && control.To[1] == '5')
+            {
+                if (control.ReturnPosition(control.From[0] + "6").Content == "") return true;
+            }
+            return false;
         }
         
     }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Chess.Figures;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -14,47 +15,74 @@ namespace Chess.Movers
     public class ControlFigures
     {
         private Grid? _board { get; set; }
-        private readonly List<char> _xDirections = new List<char>() { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H' };
+        public readonly List<char> _xDirections = new List<char>() { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H' };
 
-        private bool WhiteKingMoved = false;    
+        public bool WhiteKingMoved = false;
+        public bool BlackKingMoved = false;    
 
         private List<string> _allAttackedSquaresFromBlack = new List<string>();
         private List<string> _allAttackedSquaresFromWhite = new List<string>();
 
+        private Pawn pawn { get; set; }
+        public King king { get; set; }  
 
         public ControlFigures(Grid board)
         {
             this._board = board;
+            this.pawn = new Pawn(this);
+            this.king = new King(this);
         }
 
+        public string From { get; set; }
+        public string To { get; set; }
 
         public bool PossibleMove(string Figure, string from, string to)
         {
+            this.From = from;
+            this.To = to;
+
             switch (Figure)
             {
                 case "\u2659":
-                    return ValidatePawn(from, to, true);
+                    return ValidateWhitePawn();
 
                 case "\u2658":
-                    return ValidateKnight(from, to);
+                    return ValidateKnight();
 
                 case "\u2656":
-                    return ValidateRock(from, to);
+                    return ValidateRock();
 
                 case "\u2657":
-                    return ValidateBishop(from, to);
+                    return ValidateBishop();
 
                 case "\u2655":
-                    return ValidateQueen(from, to);
+                    return ValidateQueen();
 
                 case "\u2654":
-                    return ValidateKing(from, to);
+                    return ValidateKing(true);
 
 
-                default:
-                    break;
+                case "\u265F":
+                    return ValidateBlackPawn();
+
+                case "\u265B":
+                    return ValidateQueen();
+
+                case "\u265A":
+                    return ValidateKing(false);
+
+                case "\u265D":
+                    return ValidateBishop();
+
+                case "\u265E":
+                    return ValidateKnight();
+
+                case "\u265C":
+                    return ValidateRock();
+
+
             }
-            return true;
+            return false;
         }
 
         public Label ReturnPosition(string directions)
@@ -63,37 +91,34 @@ namespace Chess.Movers
             return (Label)obj;
         }
 
-        public bool ValidatePawn(string from, string to, bool isWhite)
+        public bool ValidateWhitePawn()
         {
-            if (isWhite)
+            if (ReturnPosition(this.To).Content != "")
             {
-                if (ReturnPosition(to).Content != "")
+                if (pawn.ValidateTaking(1))
                 {
-                    if (Math.Pow(Convert.ToInt16(to[1]) - Convert.ToInt16(from[1]), 2) == 1 && Math.Pow(_xDirections.IndexOf(to[0]) - _xDirections.IndexOf(from[0]), 2) == 1)
-                    {
-                        return true;
-                    }
+                    return true;
                 }
+            }
+            else
+            {
+                return pawn.ValidateWhite();
+            }
+            return false;
+        }
 
-                if (from[0] == to[0] && (Convert.ToInt16(from[1]) - Convert.ToInt16(to[1]) == -1))
+        public bool ValidateBlackPawn()
+        {
+            if (ReturnPosition(this.To).Content != "")
+            {
+                if (pawn.ValidateTaking(-1))
                 {
-                    if (ReturnPosition(to).Content == "")
-                    {
-                        return true;
-                    }
+                    return true;
                 }
-                else if (from[1] == '2' && to[1] == '4')
-                {
-
-                    if (ReturnPosition(from[0] + "3").Content == "")
-                    {
-                        if (ReturnPosition(to).Content == "")
-                        {
-                            return true;
-                        }
-                    }
-                }
-                return false;
+            }
+            else
+            {
+                return pawn.ValidateBlack();
             }
             return false;
         }
@@ -111,9 +136,9 @@ namespace Chess.Movers
             return N1 - N2;
         }
 
-        public bool ValidateQueen(string from, string to)
+        public bool ValidateQueen()
         {
-            if (ValidateRock(from, to) || ValidateBishop(from, to))
+            if (ValidateRock() || ValidateBishop())
             {
                 return true;
             }
@@ -122,7 +147,7 @@ namespace Chess.Movers
 
         //kvůli královi musím storovat všechny políčka který figurky napadaj
 
-        public bool ValidateKnight(string from, string to)
+        public bool ValidateKnight()
         {
             _mark = true;
             string possibleDir = "";
@@ -133,58 +158,58 @@ namespace Chess.Movers
             for (int i = 0; i < 2; i++)
             {
                 //vertikal validation
-                row = ChangeMark(Convert.ToInt32(from[1].ToString()), 2);
+                row = ChangeMark(Convert.ToInt32(this.From[1].ToString()), 2);
 
 
-                if (_xDirections.IndexOf(from[0]) + 1 < _xDirections.Count)
+                if (_xDirections.IndexOf(this.From[0]) + 1 < _xDirections.Count)
                 {
-                    column = _xDirections[_xDirections.IndexOf(from[0]) + 1];
+                    column = _xDirections[_xDirections.IndexOf(this.From[0]) + 1];
                 }
 
                 possibleDir = column.ToString() + row.ToString();
 
-                if (to == possibleDir)
+                if (this.To == possibleDir)
                 {
                     return true;
                 }
 
 
-                if (_xDirections.IndexOf(from[0]) - 1 > -1)
+                if (_xDirections.IndexOf(this.From[0]) - 1 > -1)
                 {
-                    column = _xDirections[_xDirections.IndexOf(from[0]) - 1];
+                    column = _xDirections[_xDirections.IndexOf(this.From[0]) - 1];
                 }
 
                 possibleDir = column.ToString() + row.ToString();
 
-                if (to == possibleDir)
+                if (this.To == possibleDir)
                 {
                     return true;
                 }
 
 
                 //Horizontal validation
-                row = ChangeMark(Convert.ToInt32(from[1].ToString()), 1);
+                row = ChangeMark(Convert.ToInt32(this.From[1].ToString()), 1);
 
-                if (_xDirections.IndexOf(from[0]) + 2 < _xDirections.Count)
+                if (_xDirections.IndexOf(this.From[0]) + 2 < _xDirections.Count)
                 {
-                    column = _xDirections[_xDirections.IndexOf(from[0]) + 2];
+                    column = _xDirections[_xDirections.IndexOf(this.From[0]) + 2];
                 }
 
                 possibleDir = column.ToString() + row.ToString();
 
-                if (to == possibleDir)
+                if (this.To == possibleDir)
                 {
                     return true;
                 }
 
-                if (_xDirections.IndexOf(from[0]) - 2 > -1)
+                if (_xDirections.IndexOf(this.From[0]) - 2 > -1)
                 {
-                    column = _xDirections[_xDirections.IndexOf(from[0]) - 2];
+                    column = _xDirections[_xDirections.IndexOf(this.From[0]) - 2];
                 }
 
                 possibleDir = column.ToString() + row.ToString();
 
-                if (to == possibleDir)
+                if (this.To == possibleDir)
                 {
                     return true;
                 }
@@ -196,14 +221,14 @@ namespace Chess.Movers
         }
 
 
-        public bool ValidateRock(string from, string to)
+        public bool ValidateRock()
         {
-            string columns = from[0].ToString();
+            string columns = this.From[0].ToString();
 
-            for (int i = Convert.ToInt32(from[1].ToString()) + 1; i < 9; i++)
+            for (int i = Convert.ToInt32(this.From[1].ToString()) + 1; i < 9; i++)
             {
                 columns = columns[0] + i.ToString();
-                if (columns == to)
+                if (columns == this.To)
                 {
                     return true;
                 }
@@ -213,12 +238,12 @@ namespace Chess.Movers
                 }
             }
 
-            columns = from[0].ToString();
+            columns = this.From[0].ToString();
 
-            for (int i = Convert.ToInt32(from[1].ToString()) - 1; i > 0; i--)
+            for (int i = Convert.ToInt32(this.From[1].ToString()) - 1; i > 0; i--)
             {
                 columns = columns[0] + i.ToString();
-                if (columns == to)
+                if (columns == this.To)
                 {
                     return true;
                 }
@@ -228,12 +253,12 @@ namespace Chess.Movers
                 }
             }
 
-            columns = from;
+            columns = this.From;
 
-            for (int i = _xDirections.IndexOf(from[0]) + 1; i < 8; i++)
+            for (int i = _xDirections.IndexOf(this.From[0]) + 1; i < 8; i++)
             {
-                columns = _xDirections[i] + from[1].ToString();
-                if (columns == to)
+                columns = _xDirections[i] + this.From[1].ToString();
+                if (columns == this.To)
                 {
                     return true;
                 }
@@ -243,12 +268,12 @@ namespace Chess.Movers
                 }
             }
 
-            columns = from;
+            columns = this.From;
 
-            for (int i = _xDirections.IndexOf(from[0]) - 1; i > 0; i--)
+            for (int i = _xDirections.IndexOf(this.From[0]) - 1; i > 0; i--)
             {
-                columns = _xDirections[i] + from[1].ToString();
-                if (columns == to)
+                columns = _xDirections[i] + this.From[1].ToString();
+                if (columns == this.To)
                 {
                     return true;
                 }
@@ -262,49 +287,15 @@ namespace Chess.Movers
         }
 
 
-        public bool ValidateBishop(string from, string to)
+        public bool ValidateBishop()
         {
             string currentCell = "";
-            int a = _xDirections.IndexOf(from[0]);
+            int a = _xDirections.IndexOf(this.From[0]);
 
             //left up
-            for (int i = Convert.ToInt32(from[1].ToString()) + 1; i < 9; i++)
+            for (int i = Convert.ToInt32(this.From[1].ToString()) + 1; i < 9; i++)
             {
-                if(from == to)
-                {
-                    continue;
-                }
-
-
-                if(a == 0)
-                {                  
-                    currentCell = _xDirections[a] + i.ToString();
-                    a--;
-                }
-                else if (a > 0)
-                {
-                    a--;
-                    currentCell = _xDirections[a] + i.ToString();
-                    
-                }
-                
-                if (currentCell == to)
-                {
-                    return true;
-                }
-                else if (ReturnPosition(currentCell).Content != "")
-                {
-                    break;
-                }                          
-            }
-
-            currentCell = "";
-            a = _xDirections.IndexOf(from[0]);
-
-            //left down
-            for (int i = Convert.ToInt32(from[1].ToString()) - 1; i > 0; i--)
-            {
-                if (from == to)
+                if (this.From == this.To)
                 {
                     continue;
                 }
@@ -319,10 +310,10 @@ namespace Chess.Movers
                 {
                     a--;
                     currentCell = _xDirections[a] + i.ToString();
-                    
+
                 }
-                
-                if (currentCell == to)
+
+                if (currentCell == this.To)
                 {
                     return true;
                 }
@@ -330,17 +321,51 @@ namespace Chess.Movers
                 {
                     break;
                 }
-                
-                    
             }
 
             currentCell = "";
-            a = _xDirections.IndexOf(from[0]);
+            a = _xDirections.IndexOf(this.From[0]);
+
+            //left down
+            for (int i = Convert.ToInt32(this.From[1].ToString()) - 1; i > 0; i--)
+            {
+                if (this.From == this.To)
+                {
+                    continue;
+                }
+
+
+                if (a == 0)
+                {
+                    currentCell = _xDirections[a] + i.ToString();
+                    a--;
+                }
+                else if (a > 0)
+                {
+                    a--;
+                    currentCell = _xDirections[a] + i.ToString();
+
+                }
+
+                if (currentCell == this.To)
+                {
+                    return true;
+                }
+                else if (ReturnPosition(currentCell).Content != "")
+                {
+                    break;
+                }
+
+
+            }
+
+            currentCell = "";
+            a = _xDirections.IndexOf(this.From[0]);
 
             //right up
-            for (int i = Convert.ToInt32(from[1].ToString()) + 1; i < 9; i++)
+            for (int i = Convert.ToInt32(this.From[1].ToString()) + 1; i < 9; i++)
             {
-                if (from == to)
+                if (this.From == this.To)
                 {
                     continue;
                 }
@@ -354,12 +379,12 @@ namespace Chess.Movers
                 {
                     a++;
                     currentCell = _xDirections[a] + i.ToString();
-                    
+
                 }
 
                 try
                 {
-                    if (currentCell == to)
+                    if (currentCell == this.To)
                     {
                         return true;
                     }
@@ -371,20 +396,20 @@ namespace Chess.Movers
                 catch
                 {
                 }
-                
-                
-              
+
+
+
 
             }
 
             currentCell = "";
-            a = _xDirections.IndexOf(from[0]);
+            a = _xDirections.IndexOf(this.From[0]);
 
             //right down
-            for (int i = Convert.ToInt32(from[1].ToString()) - 1; i > 0; i--)
+            for (int i = Convert.ToInt32(this.From[1].ToString()) - 1; i > 0; i--)
             {
 
-                if (from == to)
+                if (this.From == this.To)
                 {
                     continue;
                 }
@@ -399,12 +424,12 @@ namespace Chess.Movers
                 {
                     a++;
                     currentCell = _xDirections[a] + i.ToString();
-                    
+
                 }
 
                 try
                 {
-                    if (currentCell == to)
+                    if (currentCell == this.To)
                     {
                         return true;
                     }
@@ -413,51 +438,33 @@ namespace Chess.Movers
                         break;
                     }
                 }
-                catch { 
+                catch
+                {
                 }
-              
-               
+
+
 
             }
 
             return false;
         }
 
-        public bool ValidateKing(string from, string to)
+        public bool ValidateKing(bool isWhite)
         {
-            int fromColumn = _xDirections.IndexOf(from[0]);
-            int toColumn = _xDirections.IndexOf(to[0]);
+            int fromColumn = _xDirections.IndexOf(this.From[0]);
+            int toColumn = _xDirections.IndexOf(this.To[0]);
 
-            int fromRow = Convert.ToInt32(from[1]);
-            int toRow = Convert.ToInt32(to[1]);
+            int fromRow = Convert.ToInt32(this.From[1]);
+            int toRow = Convert.ToInt32(this.To[1]);
 
-            if ( fromColumn - toColumn <= 1 && fromColumn - toColumn >= -1 && fromRow - toRow <= 1 && fromRow - toRow >= -1)
+            if (fromColumn - toColumn <= 1 && fromColumn - toColumn >= -1 && fromRow - toRow <= 1 && fromRow - toRow >= -1)
             {
                 this.WhiteKingMoved = true;
                 return true;
             }
 
-            if (WhiteKingMoved) return false;
-
-
-            if (to[0] == 'G' && to[1] == '1' && ReturnPosition("H1").Content.ToString() == "\u2656" && ReturnPosition("F1").Content.ToString() == "")
-            {
-                this.WhiteKingMoved = true;
-                ReturnPosition("H1").Content = "";
-                ReturnPosition("F1").Content = "\u2656";
-                return true;
-            }
-
-            if(to[0] == 'C' && to[1] == '1' && ReturnPosition("A1").Content.ToString() == "\u2656" && ReturnPosition("B1").Content.ToString() == "" && ReturnPosition("D1").Content.ToString() == "")
-            {
-                this.WhiteKingMoved = true;
-                ReturnPosition("A1").Content = "";
-                ReturnPosition("D1").Content = "\u2656";
-                return true;
-            }
-
-            return false;
-
+           if(isWhite) return king.WhiteCastle();
+            return king.BlackCastle();
         }
 
     }
