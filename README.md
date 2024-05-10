@@ -10,10 +10,10 @@ I created a chess program that adheres to official chess rules, ensuring players
    - **Knights**: They have a unique L-shaped movement, able to jump over other pieces.
    - **Kings**: They can move one square in any direction, with special checks for castling.
 
-3. **Check and Checkmate**: The program checks if a move would leave the king in check, which is invalid. It also verifies checkmate conditions, ending the game when applicable.
+3. **Turn Management**: The program alternates turns between the players and tracks the overall game state, including checks, captures, and castling rights.
 
-4. **Turn Management**: The program alternates turns between the players and tracks the overall game state, including checks, captures, and castling rights.
-
-5. **Error Handling**: If a player attempts an invalid move, the program provides feedback, explaining why the move isn't allowed.
+4. **Error Handling**: If a player attempts an invalid move, the program don't make a move.
 
 Overall, this chess program offers a robust playing experience, adhering to chess rules and ensuring a fair game. By implementing thorough validation and logic, players can focus on strategy without worrying about accidental rule violations.
+<tr></tr>
+![image](https://github.com/oluusis/Chess/assets/90570377/9b807bfb-2eba-4a54-91be-dfcdc0dd7bb3)
