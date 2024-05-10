@@ -16,4 +16,6 @@ I created a chess program that adheres to official chess rules, ensuring players
 
 Overall, this chess program offers a robust playing experience, adhering to chess rules and ensuring a fair game. By implementing thorough validation and logic, players can focus on strategy without worrying about accidental rule violations.
 <tr></tr>
-![image](https://github.com/oluusis/Chess/assets/90570377/9b807bfb-2eba-4a54-91be-dfcdc0dd7bb3)
+
+![image](https://github.com/oluusis/Chess/assets/90570377/7dd07658-f611-4055-9527-1d8f55faf697)
+
